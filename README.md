@@ -11,7 +11,33 @@
 
 ## Installation
 
-Connect to your Umbrel node via SSH, then run these two commands:
+### Step 1: Connect to Your Umbrel Node via SSH
+
+**macOS / Linux**
+
+Open the Terminal app and run:
+
+```bash
+ssh umbrel@umbrel.local
+```
+
+**Windows**
+
+Open **PowerShell** (search for it in the Start menu) and run the same command:
+
+```powershell
+ssh umbrel@umbrel.local
+```
+
+If `umbrel.local` doesn't work, replace it with your Umbrel's IP address (e.g., `ssh umbrel@192.168.1.100`). You can find the IP address on your router's admin page or on the Umbrel dashboard.
+
+When prompted, enter your **Umbrel dashboard password**.
+
+---
+
+### Step 2: Run the Installer
+
+Once connected, run this command (it doesn't matter which directory you are in):
 
 ```bash
 curl -sSL https://raw.githubusercontent.com/baekchan-dev/TBM/master/install.sh | bash
