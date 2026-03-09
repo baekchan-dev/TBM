@@ -56,7 +56,19 @@ Then **reboot**:
 sudo reboot
 ```
 
-After rebooting, reconnect via SSH and run the setup wizard:
+The SSH connection will drop when the device reboots — this is normal. Wait about 30 seconds, then reconnect:
+
+**macOS / Linux**
+```bash
+ssh umbrel@umbrel.local
+```
+
+**Windows (PowerShell)**
+```powershell
+ssh umbrel@umbrel.local
+```
+
+Once reconnected, run the setup wizard:
 
 ```bash
 bash ~/TBM/app/configure.sh
