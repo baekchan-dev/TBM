@@ -68,7 +68,7 @@ The wizard guides you through timezone, screen selection, currency, and screen d
     3.  **Block Height** — Current Bitcoin block height.
     4.  **Date & Time** — System date and time.
     5.  **Network Info** — Connections, hashrate, blockchain size, and mempool. *(requires Bitcoin Node app on Umbrel)*
-    6.  **Lightning Channels** — Active channels and balance. *(requires [Bitcoin Lightning Node](https://github.com/getumbrel/umbrel-lightning) app on Umbrel)*
+    6.  **Lightning Channels** — Active channels and balance. *(requires Bitcoin Lightning Node app on Umbrel)*
     7.  **Disk Usage** — Umbrel storage usage.
 *   **46 supported fiat currencies** (AED, ARS, AUD, BRL, CAD, CHF, CNY, EUR, GBP, HKD, JPY, KRW, USD, and more)
 *   **Smart timezone detection** — auto-detected from system; manual override available
@@ -121,14 +121,20 @@ bash ~/TBM/uninstall.sh
 
 ## Troubleshooting
 
-**White screen after installation**
-Check your GPIO wiring. Verify the service is running: `sudo systemctl status tbm-umbrel`.
+**LCD still shows a white screen after installation**
+Verify the service is running: `sudo systemctl status tbm-umbrel`. If the service is running but the screen is white, check your GPIO wiring against the Wiring Diagram above.
 
 **Wrong timezone shown**
 Run `bash ~/TBM/app/configure.sh` again. Answer `n` when asked if the auto-detected timezone is correct, then enter your timezone manually (e.g., `America/New_York`, `Europe/London`, `Asia/Tokyo`).
 
+**Screen 5 (Network Info) shows `--` for all values**
+This screen requires the Bitcoin Node app on Umbrel. Make sure it is installed and fully synced.
+
+**Screen 6 (Lightning Channels) shows nothing**
+This screen requires the Bitcoin Lightning Node app on Umbrel. Make sure it is installed and running.
+
 **Garbled or striped display**
-This fork includes a bundled ST7735 driver tuned for the TBM 1.8" panel. If issues persist, it is likely a hardware connection problem — check your wiring.
+Check your GPIO wiring against the Wiring Diagram above. This is almost always a loose or incorrect wire.
 
 **`config.ini` conflicts on `git pull`**
 Use `git stash` before pulling (see Updating section above).
