@@ -5,8 +5,6 @@
 #     curl -sSL https://raw.githubusercontent.com/baekchan-dev/TBM/master/install.sh | bash
 #-------------------------------------------------------------------------------
 
-set -e
-
 REPO_URL="https://github.com/baekchan-dev/TBM.git"
 INSTALL_DIR="$HOME/TBM"
 BACKUP_DIR="$HOME/TBM-backup-$(date +%Y%m%d%H%M%S)"
@@ -103,22 +101,35 @@ echo ""
 echo "[5/5] Enabling SPI interface..."
 echo ""
 
-if [ -f /boot/firmware/config.txt ]; then
-    CONFIG_PATH="/boot/firmware/config.txt"
-elif [ -f /boot/config.txt ]; then
-    CONFIG_PATH="/boot/config.txt"
+# Check if SPI is already active (Umbrel OS often has SPI enabled by default)
+if ls /dev/spidev* > /dev/null 2>&1; then
+    echo "  ✔ SPI is already enabled (/dev/spidev* found). Skipping."
 else
-    CONFIG_PATH=""
-    echo "  WARNING: Could not find config.txt. Please enable SPI manually."
-fi
-
-if [ -n "$CONFIG_PATH" ]; then
-    sudo sed -i 's/dtparam=spi=off/dtparam=spi=on/g' "$CONFIG_PATH"
-    sudo sed -i 's/#dtparam=spi=on/dtparam=spi=on/g' "$CONFIG_PATH"
-    if ! grep -q "dtparam=spi=on" "$CONFIG_PATH"; then
-        echo "dtparam=spi=on" | sudo tee -a "$CONFIG_PATH" > /dev/null
+    # Locate config.txt
+    if [ -f /boot/firmware/config.txt ]; then
+        CONFIG_PATH="/boot/firmware/config.txt"
+    elif [ -f /boot/config.txt ]; then
+        CONFIG_PATH="/boot/config.txt"
+    else
+        CONFIG_PATH=""
     fi
-    echo "  ✔ SPI enabled in ${CONFIG_PATH}"
+
+    if [ -n "$CONFIG_PATH" ]; then
+        # Try to enable SPI; handle read-only filesystem gracefully
+        if sudo sed -i 's/dtparam=spi=off/dtparam=spi=on/g' "$CONFIG_PATH" 2>/dev/null && \
+           sudo sed -i 's/#dtparam=spi=on/dtparam=spi=on/g' "$CONFIG_PATH" 2>/dev/null; then
+            if ! grep -q "dtparam=spi=on" "$CONFIG_PATH"; then
+                echo "dtparam=spi=on" | sudo tee -a "$CONFIG_PATH" > /dev/null 2>&1 || true
+            fi
+            echo "  ✔ SPI enabled in ${CONFIG_PATH}"
+        else
+            echo "  NOTE: Could not modify ${CONFIG_PATH} (read-only filesystem)."
+            echo "        This is normal on Umbrel OS — SPI is typically already enabled."
+            echo "        If your LCD does not work after rebooting, please enable SPI manually."
+        fi
+    else
+        echo "  NOTE: config.txt not found. If your LCD does not work, enable SPI manually."
+    fi
 fi
 
 echo ""
