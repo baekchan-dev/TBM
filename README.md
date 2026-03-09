@@ -13,19 +13,9 @@
 
 ### Step 1: Connect to Your Umbrel Node via SSH
 
-**macOS / Linux**
-
-Open the Terminal app and run:
+Open a terminal (Terminal on macOS/Linux, PowerShell on Windows) and run:
 
 ```bash
-ssh umbrel@umbrel.local
-```
-
-**Windows**
-
-Open **PowerShell** (search for it in the Start menu) and run the same command:
-
-```powershell
 ssh umbrel@umbrel.local
 ```
 
@@ -58,13 +48,7 @@ sudo reboot
 
 The SSH connection will drop when the device reboots — this is normal. Wait about 30 seconds, then reconnect:
 
-**macOS / Linux**
 ```bash
-ssh umbrel@umbrel.local
-```
-
-**Windows (PowerShell)**
-```powershell
 ssh umbrel@umbrel.local
 ```
 
