@@ -31,7 +31,7 @@ ssh umbrel@umbrel.local
 
 If `umbrel.local` doesn't work, replace it with your Umbrel's IP address (e.g., `ssh umbrel@192.xxx.xxx.xxx`). You can find the IP address on your router's admin page or on the Umbrel dashboard.
 
-When prompted, enter your **Umbrel dashboard password**.
+When prompted for a password, enter the same password you use to log in to the **Umbrel web dashboard** (the one you set up when you first configured Umbrel). Note that the password will not be visible as you type — this is normal. Just type it and press Enter.
 
 ---
 
