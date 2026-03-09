@@ -1,7 +1,7 @@
 # TBM — The Bitcoin Machine (Umbrel 1.x Compatible Fork)
 
-> **This is an unofficial community fork** of [doidotech/TBM](https://github.com/doidotech/TBM), updated to work with **Umbrel OS 1.x** and **Pillow 10+**.
-> The original project is no longer maintained and causes a **white screen of death (WSOD)** on all current Umbrel versions. This fork fixes that.
+> **This is an unofficial community fork** of [doidotech/TBM](https://github.com/doidotech/TBM).
+> Since Umbrel OS 1.0 was released in 2024, many TBM owners reported that their LCD display went completely white and the original scripts stopped working. The original maintainer was no longer active, leaving users with no fix. This fork resolves the issue.
 
 ---
 
@@ -9,88 +9,50 @@
 
 ---
 
-## Who Is This For?
+## Installation
 
-The Bitcoin Machine was sold in 2022 and is no longer in production. If you are reading this, you almost certainly already have TBM installed from the original `doidotech/TBM` repository, and it stopped working after an Umbrel update.
+Connect to your Umbrel node via SSH, then run these two commands:
 
-**This fork is designed for exactly that situation.** The installation script automatically detects and removes the old service before setting up the new one. You do not need to manually uninstall anything first.
+```bash
+curl -sSL https://raw.githubusercontent.com/baekchan-dev/TBM/master/install.sh | bash
+```
+
+The installer will automatically:
+- Stop and remove the old `UmbrelST7735LCD` service (if running)
+- Back up your existing `~/TBM` directory (if present)
+- Download this fork
+- Install all required dependencies
+- Enable the SPI interface
+
+Then **reboot**:
+
+```bash
+sudo reboot
+```
+
+After rebooting, reconnect via SSH and run the setup wizard:
+
+```bash
+bash ~/TBM/app/configure.sh
+```
+
+The wizard guides you through timezone, screen selection, currency, and screen duration — then starts the service automatically. **Your LCD should now be working.**
 
 ---
 
 ## Features
 
-*   **Fixes the White Screen:** Resolves the WSOD caused by breaking changes in Umbrel 1.x and Pillow 10+.
-*   **Automatic Migration:** `install.sh` detects and removes the legacy `UmbrelST7735LCD` service automatically.
 *   **7 Information Screens:**
-    1.  **Bitcoin Price** — Real-time price and sats/currency value with thousands separator.
+    1.  **Bitcoin Price** — Real-time price and sats/currency value.
     2.  **Next Block Info** — Estimated fees for the next block.
     3.  **Block Height** — Current Bitcoin block height.
     4.  **Date & Time** — System date and time.
     5.  **Network Info** — Umbrel IP address and network status.
     6.  **Lightning Channels** — Active/inactive channel count.
     7.  **Disk Usage** — Umbrel storage usage.
-*   **Interactive Setup Wizard** — Guides you through timezone, screen selection, currency (46 supported), and screen duration.
-*   **Smart Timezone Detection** — Auto-detects timezone from the system; manual override available.
-*   **Auto-Start & Restart** — Runs as a `tbm-umbrel` systemd service, starting on boot and restarting after reconfiguration.
-
----
-
-## Installation
-
-All commands should be run on your Umbrel device after connecting via SSH.
-
-### Step 1: Connect via SSH
-
-```bash
-ssh umbrel@umbrel.local
-```
-
-Enter your Umbrel dashboard password when prompted.
-
-### Step 2: Clone This Repository
-
-If you have an old TBM directory, rename it first to keep it as a backup:
-
-```bash
-mv ~/TBM ~/TBM-old   # optional: keep old files as backup
-```
-
-Then clone this fork:
-
-```bash
-git clone https://github.com/baekchan-dev/TBM.git
-cd ~/TBM/app
-```
-
-### Step 3: Run the Installation Script
-
-This script will:
-- **Automatically stop and remove the old `UmbrelST7735LCD` service** (if present)
-- Install all required Python libraries
-- Enable the SPI interface
-
-```bash
-bash install.sh
-```
-
-### Step 4: Reboot
-
-```bash
-sudo reboot
-```
-
-### Step 5: Configure & Start the LCD Service
-
-After rebooting, reconnect via SSH and run the setup wizard:
-
-```bash
-cd ~/TBM/app
-bash configure.sh
-```
-
-The wizard will guide you through timezone confirmation, screen selection, currency, and screen duration. When finished, the service starts automatically.
-
-**That's it — your LCD should now be working again.**
+*   **46 supported fiat currencies** (AED, ARS, AUD, BRL, CAD, CHF, CNY, EUR, GBP, HKD, JPY, KRW, USD, and more)
+*   **Smart timezone detection** — auto-detected from system; manual override available
+*   **Auto-start & restart** — runs as a `tbm-umbrel` systemd service
 
 ---
 
@@ -108,10 +70,7 @@ The wizard will guide you through timezone confirmation, screen selection, curre
 ## Updating
 
 ```bash
-cd ~/TBM
-git stash
-git pull
-git stash drop
+cd ~/TBM && git stash && git pull && git stash drop
 sudo systemctl restart tbm-umbrel
 ```
 
@@ -120,8 +79,7 @@ sudo systemctl restart tbm-umbrel
 ## Uninstallation
 
 ```bash
-cd ~/TBM
-bash uninstall.sh
+bash ~/TBM/uninstall.sh
 ```
 
 ---
@@ -150,7 +108,7 @@ Check your GPIO wiring. Verify the service is running: `sudo systemctl status tb
 Run `bash ~/TBM/app/configure.sh` again. Answer `n` when asked if the auto-detected timezone is correct, then enter your timezone manually (e.g., `America/New_York`).
 
 **Garbled or striped display**
-This fork includes a bundled ST7735 driver (`st7735_tbm.py`) tuned for the TBM 1.8" panel. If issues persist, it may be a hardware connection problem.
+This fork includes a bundled ST7735 driver tuned for the TBM 1.8" panel. If issues persist, it is likely a hardware connection problem — check your wiring.
 
 **`config.ini` conflicts on `git pull`**
 Use `git stash` before pulling (see Updating section above).
@@ -161,20 +119,19 @@ Use `git stash` before pulling (see Updating section above).
 
 ```
 TBM/
+├── install.sh          # One-line installer (run this first)
+├── uninstall.sh        # Uninstallation script
 ├── app/
 │   ├── tbm.py              # Main LCD display script
-│   ├── setup_wizard.py     # Interactive settings wizard
-│   ├── configure.sh        # Service setup script
-│   ├── install.sh          # Dependency installation script
+│   ├── configure.sh        # Service setup wizard
 │   ├── config.ini          # User settings (auto-updated by wizard)
-│   ├── CurrencyData.py     # Supported currency list (46 fiat currencies)
+│   ├── CurrencyData.py     # Supported currency list
 │   ├── connections.py      # Bitcoin/LND connection helpers
 │   ├── st7735_tbm.py       # Bundled ST7735 LCD driver
 │   ├── calibrate.py        # LCD calibration utility
 │   ├── images/             # Screen background images
 │   └── poppins/            # Poppins font files
-├── Images/                 # Repository images (for README)
-├── uninstall.sh            # Uninstallation script
+├── Images/             # Repository images (for README)
 ├── LICENSE
 └── README.md
 ```
