@@ -64,11 +64,11 @@ The wizard guides you through timezone, screen selection, currency, and screen d
 
 *   **7 Information Screens:**
     1.  **Bitcoin Price** — Real-time price and sats/currency value.
-    2.  **Next Block Info** — Estimated fees for the next block.
+    2.  **Next Block Info** — Estimated fees for the next block. *(uses local [Mempool](https://mempool.space) app if installed, otherwise falls back to mempool.space)*
     3.  **Block Height** — Current Bitcoin block height.
     4.  **Date & Time** — System date and time.
-    5.  **Network Info** — Umbrel IP address and network status.
-    6.  **Lightning Channels** — Active/inactive channel count.
+    5.  **Network Info** — Connections, hashrate, blockchain size, and mempool.
+    6.  **Lightning Channels** — Active channels and balance. *(requires [Bitcoin Lightning Node](https://github.com/getumbrel/umbrel-lightning) app on Umbrel)*
     7.  **Disk Usage** — Umbrel storage usage.
 *   **46 supported fiat currencies** (AED, ARS, AUD, BRL, CAD, CHF, CNY, EUR, GBP, HKD, JPY, KRW, USD, and more)
 *   **Smart timezone detection** — auto-detected from system; manual override available
