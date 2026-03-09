@@ -172,3 +172,6 @@ TBM/
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+*I'm not a developer — this fix was made possible with the help of an AI agent, which cost me around $200 in compute. If this saved your TBM, a few sats are always appreciated: baekchan@walletofsatoshi.com*
