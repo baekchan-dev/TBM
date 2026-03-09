@@ -15,7 +15,7 @@
 #     v2.10.0 base (0x40, MX=1) + MY=1 to correct upside-down.
 #
 #   Display orientation pipeline:
-#   1. UmbrelLCD.py draws all content rotated 270° CCW onto a 128×160 buffer.
+#   1. tbm.py draws all content rotated 270° CCW onto a 128×160 buffer.
 #   2. image_to_data() converts the buffer to RGB565 (no additional flip).
 #   3. MADCTL=0x40 (MX=1, BGR) sets the hardware scan direction so that
 #      the 270° CCW software rotation produces correct portrait orientation.
@@ -66,7 +66,7 @@ ST7735_GMCTRN1 = 0xE1
 def image_to_data(image):
     """Convert a PIL Image to a flat list of 16-bit RGB565 bytes.
 
-    UmbrelLCD.py applies rotate(270 CCW) to all images before calling this
+    tbm.py applies rotate(270 CCW) to all images before calling this
     function. Combined with MADCTL=0x40 (MX=1, BGR), this produces the
     correct portrait orientation on hardware.
     No additional row/column flip is needed here.
@@ -202,7 +202,7 @@ class ST7735(object):
         # MY=0 (bit 7) = row address top-to-bottom (default)
         # BGR bit (bit 3): 0 = BGR order, 1 = RGB order
         #
-        # With software rotate(270, expand=1) in UmbrelLCD.py:
+        # With software rotate(270, expand=1) in tbm.py:
         #   rotate(270 CCW) + MX=0 = correct portrait orientation (no LR flip)
         #
         # bgr=True  → 0x00 (MX=0, BGR)

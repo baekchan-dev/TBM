@@ -10,7 +10,7 @@
 # exactly where each x position appears on the physical display.
 #
 # Each screen shows:
-#   - The background image (rotated the same way as UmbrelLCD.py)
+#   - The background image (rotated the same way as tbm.py)
 #   - Horizontal lines at x=20, 40, 60, 80, 100, 120 with x labels
 #   - Sample data text at candidate positions
 #

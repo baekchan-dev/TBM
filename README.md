@@ -5,7 +5,7 @@
 
 ---
 
-![TBM LCD Screen](https://raw.githubusercontent.com/ghmy4ff4t8-coder/TBM/master/Images/Main.jpg)
+![TBM LCD Screen](https://raw.githubusercontent.com/baekchan-dev/TBM/master/Images/Main.jpg)
 
 ## Features
 
@@ -62,7 +62,7 @@ These instructions are for a fresh installation on an Umbrel node. All commands 
 
 1.  **Clone this repository:**
     ```bash
-    git clone https://github.com/ghmy4ff4t8-coder/TBM.git
+    git clone https://github.com/baekchan-dev/TBM.git
     cd TBM/app
     ```
 

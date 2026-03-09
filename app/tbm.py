@@ -63,7 +63,7 @@
 #           * Adafruit_GPIO dependency removed; uses gpiod/spidev internally
 #           * 'import ST7735' deprecated; use 'import st7735' (lowercase)
 #           * disp.buffer removed; draw to a PIL Image, pass to disp.display()
-#       - FIXED: lcdSetupScript.sh now installs pimoroni/st7735-python
+#       - FIXED: install.sh now installs pimoroni/st7735-python
 #         (pip install st7735) instead of the old doido-technologies fork
 #     v2.1.0 (2024-02):
 #       - Fixed Pillow 10+ compatibility: replaced deprecated draw.textsize()
