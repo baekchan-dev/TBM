@@ -29,7 +29,7 @@ Open **PowerShell** (search for it in the Start menu) and run the same command:
 ssh umbrel@umbrel.local
 ```
 
-If `umbrel.local` doesn't work, replace it with your Umbrel's IP address (e.g., `ssh umbrel@192.168.1.100`). You can find the IP address on your router's admin page or on the Umbrel dashboard.
+If `umbrel.local` doesn't work, replace it with your Umbrel's IP address (e.g., `ssh umbrel@192.xxx.xxx.xxx`). You can find the IP address on your router's admin page or on the Umbrel dashboard.
 
 When prompted, enter your **Umbrel dashboard password**.
 
@@ -131,7 +131,7 @@ bash ~/TBM/uninstall.sh
 Check your GPIO wiring. Verify the service is running: `sudo systemctl status tbm-umbrel`.
 
 **Wrong timezone shown**
-Run `bash ~/TBM/app/configure.sh` again. Answer `n` when asked if the auto-detected timezone is correct, then enter your timezone manually (e.g., `America/New_York`).
+Run `bash ~/TBM/app/configure.sh` again. Answer `n` when asked if the auto-detected timezone is correct, then enter your timezone manually (e.g., `America/New_York`, `Europe/London`, `Asia/Tokyo`).
 
 **Garbled or striped display**
 This fork includes a bundled ST7735 driver tuned for the TBM 1.8" panel. If issues persist, it is likely a hardware connection problem — check your wiring.
