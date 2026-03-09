@@ -45,6 +45,14 @@ tbm-umbrel/
 └── README.md
 ```
 
+## Migrating from the Original `doidotech/TBM`
+
+If you previously installed the original TBM project from `doidotech`, this fork makes migration simple.
+
+The `install.sh` script will **automatically detect and remove the old `UmbrelST7735LCD` service** during the installation process, so you don't need to do it manually.
+
+All you need to do is follow the standard installation steps below. We recommend deleting or renaming your old TBM project directory before cloning this repository to avoid confusion.
+
 ## Installation
 
 These instructions are for a fresh installation on an Umbrel node. All commands should be run on your Umbrel device after connecting via SSH.

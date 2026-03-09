@@ -22,6 +22,23 @@
 # This script installs all requirements needed for ST7735 LCD
 #-------------------------------------------------------------------------------
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Remove legacy services (doidotech/TBM original) if present
+# ──────────────────────────────────────────────────────────────────────────────
+echo "Checking for legacy TBM services to remove..."
+for OLD_SVC in UmbrelST7735LCD raspiBlitzST7735LCD myNodeST7735LCD RoninDojoST7735LCD; do
+    if systemctl list-units --full --all | grep -q "${OLD_SVC}.service"; then
+        echo "  Found legacy service: ${OLD_SVC} — removing..."
+        sudo systemctl stop    "${OLD_SVC}.service" 2>/dev/null || true
+        sudo systemctl disable "${OLD_SVC}.service" 2>/dev/null || true
+        sudo rm -f "/lib/systemd/system/${OLD_SVC}.service"
+        sudo systemctl daemon-reload
+        echo "  ✔ ${OLD_SVC} removed."
+    fi
+done
+echo "Legacy service check complete."
+echo
+
 echo " "
 echo "Installing packages required for the library to work..."
 echo " "
