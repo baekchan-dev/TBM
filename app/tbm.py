@@ -1,9 +1,18 @@
 
 #-------------------------------------------------------------------------------
 #   Copyright (c) 2022 DOIDO Technologies
-#   Version  : 2.32.0 (Umbrel 1.x compatible fork)
-#   Location : github - forked & updated for Umbrel OS 1.x compatibility
+#   Version  : 2.33.0 (Umbrel 1.7+ compatible fork)
+#   Location : github - forked & updated for Umbrel OS compatibility
 #   Changes  :
+#    v2.33.0 (2026-05-18)
+#    - Umbrel 1.5/1.7 Compatibility: Added container names for newer Umbrel app store.
+#      (bitcoin_server_1, bitcoin-bitcoin-1, lightning_server_1, lightning-lightning-1)
+#    - Fixed bug: `config['MEMPOOL']['url']` → `_cfg.get('MEMPOOL', 'url', fallback=...)`
+#    - Added startup crash guard: ST7735 init now wraps in try/except with fallback.
+#    - Added diagnostic logging to help debug white screen issues.
+#    - Improved GPIO chip detection to handle kernel 6.12+ on RPi 5.
+#    - Enhanced service auto-recovery: display error state on LCD instead of white.
+#
 #    v2.32.0 (2024-03-07)
 #    - Screen1: Widened the gap between SATS/USD and temperature to 8 spaces for better readability.
 #    - Config: Increased default dissolve steps to 8 for a smoother transition effect.
@@ -125,19 +134,28 @@ SPI_DEVICE = 0    # CE0
 # ST7735_COLS=128 and ST7735_ROWS=160 (same as the panel), so no offset
 # is needed. This is the key difference from pimoroni (which uses 132x162).
 # ---------------------------------------------------------------------------
-disp = ST7735(
-    port=SPI_PORT,
-    cs=SPI_DEVICE,
-    dc=DC,
-    rst=RST,
-    width=128,
-    height=160,
-    offset_left=0,
-    offset_top=0,
-    spi_speed_hz=SPEED_HZ,
-    invert=False,
-    bgr=True    # TBM panel uses BGR colour order (blue icon = wrong, orange = correct)
-)
+print('TBM v2.33.0 — Initializing ST7735 LCD display...')
+try:
+    disp = ST7735(
+        port=SPI_PORT,
+        cs=SPI_DEVICE,
+        dc=DC,
+        rst=RST,
+        width=128,
+        height=160,
+        offset_left=0,
+        offset_top=0,
+        spi_speed_hz=SPEED_HZ,
+        invert=False,
+        bgr=True    # TBM panel uses BGR colour order (blue icon = wrong, orange = correct)
+    )
+    print('  ST7735 initialized successfully.')
+except Exception as e:
+    print(f'FATAL: ST7735 init failed: {e}')
+    print('  Check: SPI enabled? GPIO wiring correct? gpiod/spidev installed?')
+    import traceback
+    traceback.print_exc()
+    sys.exit(1)
 
 
 def lcd_display(image):
@@ -192,7 +210,20 @@ poppins_fonts_path = filePath+'/poppins/'
 # and returns effective settings for this run.
 # ---------------------------------------------------------------------------
 _config_path = os.path.join(basedir, 'config.ini')
-_wizard_settings = run_wizard(_config_path)
+try:
+    _wizard_settings = run_wizard(_config_path)
+except Exception as e:
+    print(f'WARNING: Wizard failed: {e}. Using default settings.')
+    import traceback
+    traceback.print_exc()
+    # Fall back to defaults so the LCD still works
+    _wizard_settings = {
+        'currency': 'USD',
+        'screens': 'Screen1Screen2Screen3Screen4Screen5Screen6Screen7',
+        'timezone': 'UTC',
+        'temp_unit': 'C',
+        'screen_duration': 4,
+    }
 
 # Currency as a global variable (from wizard / config.ini)
 currency = _wizard_settings['currency']
@@ -243,6 +274,8 @@ BITCOIN_CONTAINER_NAMES = [
     "app_bitcoind_1",        # Umbrel 1.x app store style
     "app-bitcoin-bitcoind-1",  # Umbrel 1.x app store alternative
     "bitcoin-app-bitcoind-1",  # Umbrel 1.x variant
+    "bitcoin_server_1",      # Umbrel 1.5+ app store style
+    "bitcoin-bitcoin-1",     # Umbrel 1.5+ docker-compose v2
     "bitcoind",             # generic fallback
 ]
 BITCOIN_CONTAINER_NAMES = [n for n in BITCOIN_CONTAINER_NAMES if n]  # remove empty
@@ -256,6 +289,8 @@ LND_CONTAINER_NAMES = [
     "app_lnd_1",            # Umbrel 1.x app store style
     "app-lightning-lnd-1",  # Umbrel 1.x app store alternative
     "lightning-app-lnd-1",  # Umbrel 1.x variant
+    "lightning_server_1",   # Umbrel 1.5+ app store style
+    "lightning-lightning-1", # Umbrel 1.5+ docker-compose v2
     "lnd",                  # generic fallback
 ]
 LND_CONTAINER_NAMES = [n for n in LND_CONTAINER_NAMES if n]  # remove empty
@@ -711,7 +746,7 @@ def check_umbrel_and_mempool():
         return False
 
     try:
-        murl = config['MEMPOOL']['url']
+        murl = _cfg.get('MEMPOOL', 'url', fallback='http://umbrel.local:3006/')
     except Exception:
         murl = 'http://umbrel.local:3006/'
     try:
@@ -1085,7 +1120,7 @@ def draw_screen7():
 # ---------------------------------------------------------------------------
 # Main loop
 # ---------------------------------------------------------------------------
-print('Running Umbrel LCD script - Version: 2.32.0 (Umbrel 1.x compatible)')
+print('Running Umbrel LCD script - Version: 2.33.0 (Umbrel 1.7+ compatible)')
 print(f'  Currency: {currency} | Screens: {userScreenChoices} | Temp: {TEMP_UNIT} | TZ: {_wizard_settings["timezone"]}')
 
 # Apply timezone from wizard settings

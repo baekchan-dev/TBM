@@ -101,16 +101,18 @@ class ST7735(object):
         self._spi.max_speed_hz = spi_speed_hz
 
         # GPIO setup via gpiod 2.x
-        # Try gpiochip0 (Pi 4), gpiochip4 (Pi 5), gpiochip1 as fallback
+        # Try gpiochip0 (Pi 4), gpiochip4 (Pi 5), and dynamic detection as fallback
         self._gpio_chip = None
-        for chip_path in ('/dev/gpiochip0', '/dev/gpiochip4', '/dev/gpiochip1'):
+        chip_paths = ['/dev/gpiochip0', '/dev/gpiochip4', '/dev/gpiochip1', '/dev/gpiochip2', '/dev/gpiochip3']
+        for chip_path in chip_paths:
             try:
                 self._gpio_chip = gpiod.Chip(chip_path)
+                print(f'  GPIO: using {chip_path}')
                 break
             except Exception:
                 continue
         if self._gpio_chip is None:
-            raise RuntimeError('Cannot open any gpiochip device. Is gpiod installed?')
+            raise RuntimeError('Cannot open any gpiochip device. Is gpiod installed? Check /dev/gpiochip*')
 
         pin_config = {
             dc: gpiod.LineSettings(

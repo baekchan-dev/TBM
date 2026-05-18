@@ -274,6 +274,16 @@ screen_duration = ${screenDuration}
 # LND container name (varies by Umbrel version).
 # The script tries multiple names automatically, so this is usually not needed.
 # container = lightning_lnd_1
+
+
+[MEMPOOL]
+# Local Mempool app URL (used if installed from Umbrel App Store).
+# url = http://umbrel.local:3006/
+
+
+[UMBREL]
+# Umbrel local dashboard URL.
+# url = http://umbrel.local/
 CONFIGEOF
 
 echo -e "\e[1;32m✔ config.ini generated successfully.\e[0m"
@@ -320,6 +330,7 @@ echo
 echo -e "\e[1;32m✔ LCD Service setup complete!\e[0m"
 echo
 printf "  %-22s sudo journalctl -u tbm-umbrel -f\n"                                   "Check logs:"
+printf "  %-22s bash ~/TBM/tools/diagnose.sh\n"                                        "Diagnose:"
 printf "  %-22s sudo systemctl stop tbm-umbrel\n"                                      "Stop service:"
 printf "  %-22s sudo systemctl restart tbm-umbrel\n"                                   "Restart service:"
 printf "  %-22s sudo systemctl stop tbm-umbrel && bash configure.sh\n"     "Re-run setup:"

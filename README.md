@@ -121,6 +121,36 @@ bash ~/TBM/uninstall.sh
 
 ## Troubleshooting
 
+**LCD shows white screen (no content at all) — after Umbrel OS update**
+
+This is the #1 issue after Umbrel OS updates. Run the diagnostic script first:
+
+```bash
+bash ~/TBM/tools/diagnose.sh
+```
+
+The diagnostic checks SPI, GPIO, Python dependencies, Docker containers, RPC connectivity, and service status — then tells you exactly what to fix.
+
+Most common fixes in order:
+1. **SPI not enabled** — Run `sudo raspi-config` → Interface Options → SPI → Enable, then reboot.
+2. **Python deps missing** — Re-run `bash ~/TBM/install.sh` to reinstall all dependencies.
+3. **Container names changed** — Umbrel sometimes renames Docker containers. The v2.33.0 update auto-detects more patterns. If still failing, find your container name with `docker ps --format '{{.Names}}' | grep -i bitcoin` and add it to `config.ini`:
+
+```ini
+[BITCOIN]
+container = your_container_name_here
+```
+
+4. **RPC password changed** — Edit `~/TBM/app/config.ini` and uncomment/update the RPC credentials:
+
+```ini
+[BITCOIN]
+rpc_user = umbrel
+rpc_pass = your_actual_password
+```
+
+Then restart: `sudo systemctl restart tbm-umbrel`
+
 **LCD still shows a white screen after installation**
 Verify the service is running: `sudo systemctl status tbm-umbrel`. If the service is running but the screen is white, check your GPIO wiring against the Wiring Diagram above.
 
@@ -147,6 +177,9 @@ Use `git stash` before pulling (see Updating section above).
 TBM/
 ├── install.sh          # One-line installer (run this first)
 ├── uninstall.sh        # Uninstallation script
+├── tools/
+│   ├── diagnose.sh         # Diagnostic script (run if LCD is white)
+│   └── simulate_screens.py # Offline screen layout tester
 ├── app/
 │   ├── tbm.py              # Main LCD display script
 │   ├── configure.sh        # Service setup wizard
